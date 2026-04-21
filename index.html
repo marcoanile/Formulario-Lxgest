@@ -469,7 +469,7 @@ footer p { font-size: 11px; color: #555; }
     </div>
   </div>
   <div class="nav">
-    <button class="btn-next" onclick="goNextStep()">Começar questionário →</button>
+    <button type="button" class="btn-next" onclick="goNextStep()">Começar questionário →</button>
   </div>
 </div>
 
@@ -527,7 +527,7 @@ footer p { font-size: 11px; color: #555; }
     <label class="opt"><input type="radio" name="q3f" onchange="togR(this)"><span class="opt-lbl">Semanalmente</span></label>
     <label class="opt"><input type="radio" name="q3f" onchange="togR(this)"><span class="opt-lbl">Mensalmente (obrigações periódicas)</span></label>
   </div>
-  <div class="nav"><button class="btn-prev" onclick="goPrevStep()">← Anterior</button><button class="btn-next" onclick="goNextStep()">Seguinte →</button></div>
+  <button type="button" class="btn-prev" onclick="goPrevStep()">Voltar</button><button type="button" class="btn-next" onclick="goNextStep()">Continuar</button></div>
 </div>
 
 <!-- STEP 4 -->
@@ -546,7 +546,7 @@ footer p { font-size: 11px; color: #555; }
     <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Benchmarks e comparações do setor</span></label>
     <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Status de tarefas da equipa</span></label>
   </div>
-  <div class="nav"><button class="btn-prev" onclick="goPrevStep()">← Anterior</button><button class="btn-next" onclick="goNextStep()">Seguinte →</button></div>
+  <div class="nav"><button type="button" class="btn-prev" onclick="goPrevStep()">Voltar</button><button type="button" class="btn-next" onclick="goNextStep()">Continuar</button></div>
 </div>
 
 <!-- STEP 5 -->
@@ -565,7 +565,7 @@ footer p { font-size: 11px; color: #555; }
   </div>
   <textarea placeholder="O que falha ou atrasa mais nestas ferramentas?" id="c5_ta" oninput="cc(this,'c5')" maxlength="300"></textarea>
   <div class="char-ct" id="c5">0 / 300</div>
-  <div class="nav"><button class="btn-prev" onclick="goPrevStep()">← Anterior</button><button class="btn-next" onclick="goNextStep()">Seguinte →</button></div>
+  <div class="nav"><button type="button" class="btn-prev" onclick="goPrevStep()">Voltar</button><button type="button" class="btn-next" onclick="goNextStep()">Continuar</button></div>
 </div>
 
 <!-- STEP 6 -->
@@ -590,7 +590,7 @@ footer p { font-size: 11px; color: #555; }
       <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Responder a dúvidas técnicas</span></label>
     </div>
   </div>
-  <div class="nav"><button class="btn-prev" onclick="goPrevStep()">← Anterior</button><button class="btn-next" onclick="goNextStep()">Seguinte →</button></div>
+  <div class="nav"><button type="button" class="btn-prev" onclick="goPrevStep()">Voltar</button><button type="button" class="btn-next" onclick="goNextStep()">Continuar</button></div>
 </div>
 
 <!-- STEP 7 -->
@@ -608,7 +608,7 @@ footer p { font-size: 11px; color: #555; }
     <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Não identifiquei ainda onde me seria útil</span></label>
     <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Não há barreiras — uso sem problemas</span></label>
   </div>
-  <div class="nav"><button class="btn-prev" onclick="goPrevStep()">← Anterior</button><button class="btn-next" onclick="goNextStep()">Seguinte →</button></div>
+  <div class="nav"><button type="button" class="btn-prev" onclick="goPrevStep()">Voltar</button><button type="button" class="btn-next" onclick="goNextStep()">Continuar</button></div>
 </div>
 
 <!-- STEP 8 -->
@@ -628,7 +628,7 @@ footer p { font-size: 11px; color: #555; }
     <label class="opt"><input type="radio" name="q8a" onchange="togR(this)"><span class="opt-lbl">Cumprimento fiscal e obrigações legais</span></label>
     <label class="opt"><input type="radio" name="q8a" onchange="togR(this)"><span class="opt-lbl">Gestão interna / coordenação de equipa</span></label>
   </div>
-  <div class="nav"><button class="btn-prev" onclick="goPrevStep()">← Anterior</button><button class="btn-next" onclick="goNextStep()">Seguinte →</button></div>
+  <div class="nav"><button type="button" class="btn-prev" onclick="goPrevStep()">Voltar</button><button type="button" class="btn-next" onclick="goNextStep()">Continuar</button></div>
 </div>
 
 <!-- STEP 9 -->
@@ -647,7 +647,7 @@ footer p { font-size: 11px; color: #555; }
   </div>
   <textarea placeholder="O que poderia evitar este retrabalho?" id="c9_ta" oninput="cc(this,'c9')" maxlength="300"></textarea>
   <div class="char-ct" id="c9">0 / 300</div>
-  <div class="nav"><button class="btn-prev" onclick="goPrevStep()">← Anterior</button><button class="btn-next" onclick="goNextStep()">Seguinte →</button></div>
+  <div class="nav"><button type="button" class="btn-prev" onclick="goPrevStep()">Voltar</button><button type="button" class="btn-next" onclick="goNextStep()">Continuar</button></div>
 </div>
 
 <!-- STEP 10 -->
@@ -668,8 +668,8 @@ footer p { font-size: 11px; color: #555; }
     <label class="opt"><input type="radio" name="q10i" onchange="togR(this)"><span class="opt-lbl">Tomar melhores decisões mais rapidamente</span></label>
   </div>
   <div class="nav">
-    <button class="btn-prev" onclick="goPrevStep()">← Anterior</button>
-    <button class="btn-next" id="submitBtn" onclick="submit()">Submeter respostas ✓</button>
+    <button type="button" class="btn-prev" onclick="goPrevStep()">Voltar</button>
+    <button type="button" class="btn-next" onclick="goNextStep()">Continuar</button>
   </div>
 </div>
 
