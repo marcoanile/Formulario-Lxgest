@@ -702,10 +702,15 @@ let cur = 0;
 const total = 10;
 
 function upd() {
-  const pct = Math.round(cur / total * 100);
-  document.getElementById('progFill').style.width = pct + '%';
-  document.getElementById('progLabel').textContent = cur === 0 ? 'Identificação' : 'Pergunta ' + cur + ' de ' + total;
-  document.getElementById('progPct').textContent = pct + '%';
+  const pct = Math.round((cur / total) * 100);
+
+  const fill = document.getElementById('progFill');
+  const label = document.getElementById('progLabel');
+  const pctEl = document.getElementById('progPct');
+
+  if (fill) fill.style.width = pct + '%';
+  if (label) label.textContent = cur === 0 ? 'Identificação' : 'Pergunta ' + cur + ' de ' + total;
+  if (pctEl) pctEl.textContent = pct + '%';
 }
 
 function show(n) {
