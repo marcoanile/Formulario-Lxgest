@@ -717,7 +717,7 @@ function show(n) {
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
   const el = document.getElementById('s' + n);
   if (el) el.classList.add('active');
-  upd();
+  show(0);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -853,7 +853,7 @@ function showUses(show) {
   }
 })();
 
-upd();
+show(0);
 
 /*
 ══════════════════════════════════════════════════════════════
