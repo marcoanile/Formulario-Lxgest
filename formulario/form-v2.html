@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LXgest — Diagnóstico de Rotina e Ferramentas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fraunces:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --orange: #F07D00;
+  --orange-deep: #c96500;
+  --orange-light: #fff3e6;
+  --orange-border: #ffd4a0;
+  --dark: #1a1a1a;
+  --dark-2: #2b2b2b;
+  --mid: #555;
+  --soft: #888;
+  --lighter: #aaa;
+  --bg: #f4f3ef;
+  --white: #ffffff;
+  --border: #e2e0db;
+  --border-hover: #c8c5be;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.12);
+  --radius: 10px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  min-height: 100vh;
+  color: var(--dark);
+}
+
+.wrapper { max-width: 720px; margin: 0 auto; padding-bottom: 80px; }
+
+.hdr {
+  background: var(--dark-2);
+  padding: 18px 32px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  border-bottom: 3px solid var(--orange);
+  position: relative;
+  overflow: hidden;
+}
+.hdr::before {
+  content: '';
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  background: rgba(240,125,0,0.08);
+}
+.hdr-logo { height: 70px; width: auto; object-fit: contain; flex-shrink: 0; }
+.hdr-divider { width: 1px; height: 60px; background: rgba(255,255,255,0.12); }
+.hdr-info { display: flex; flex-direction: column; gap: 2px; }
+.hdr-tag {
+  font-size: 10px;
+  color: var(--orange);
+  text-transform: uppercase;
+  letter-spacing: 1.8px;
+  font-weight: 700;
+}
+.hdr-sub { font-size: 12px; color: var(--lighter); font-weight: 400; }
+
+.hero {
+  background: var(--white);
+  padding: 40px 44px 32px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--orange-light);
+  border: 1px solid var(--orange-border);
+  color: var(--orange-deep);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+.hero-eyebrow::before {
+  content: '';
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--orange);
+}
+.hero h1 {
+  font-family: 'Fraunces', serif;
+  font-size: 30px;
+  font-weight: 500;
+  color: var(--dark);
+  line-height: 1.25;
+  margin-bottom: 12px;
+}
+.hero h1 em { color: var(--orange); font-style: normal; }
+.hero p { font-size: 14px; color: var(--soft); line-height: 1.75; max-width: 520px; }
+
+.prog-track { height: 3px; background: var(--border); }
+.prog-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--orange) 0%, #ffaa44 100%);
+  transition: width .5s cubic-bezier(.4,0,.2,1);
+  border-radius: 0 2px 2px 0;
+}
+.prog-bar {
+  background: var(--white);
+  padding: 10px 44px 11px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+.prog-label { font-size: 12px; color: var(--soft); font-weight: 500; }
+.prog-pct { font-size: 12px; color: var(--orange); font-weight: 700; }
+
+.form-body { background: var(--white); padding: 44px; }
+
+.step { display: none; animation: fadeUp .35s cubic-bezier(.4,0,.2,1); }
+.step.active { display: block; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.stag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  color: var(--orange-deep);
+  background: var(--orange-light);
+  border: 1px solid var(--orange-border);
+  padding: 5px 14px;
+  border-radius: 20px;
+  margin-bottom: 22px;
+}
+.stag::before {
+  content: '';
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--orange);
+}
+
+.q-num {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--orange);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 9px;
+}
+.q-text {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--dark);
+  line-height: 1.45;
+  margin-bottom: 8px;
+}
+.q-hint {
+  font-size: 13px;
+  color: var(--soft);
+  font-style: italic;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.opts { display: flex; flex-direction: column; gap: 9px; margin-bottom: 6px; }
+.opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 18px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color .15s, background .15s, transform .1s;
+  background: var(--white);
+  user-select: none;
+}
+.opt:hover { border-color: var(--orange); background: var(--orange-light); transform: translateX(2px); }
+.opt.sel  { border-color: var(--orange); background: var(--orange-light); }
+.opt input {
+  margin-top: 2px;
+  accent-color: var(--orange);
+  width: 16px; height: 16px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.opt-lbl { font-size: 14px; color: var(--dark); line-height: 1.55; cursor: pointer; font-weight: 450; }
+
+textarea,
+input[type=text],
+select {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px;
+  color: var(--dark);
+  background: var(--white);
+  transition: border-color .15s, box-shadow .15s;
+  line-height: 1.6;
+}
+textarea { resize: vertical; min-height: 92px; }
+textarea:focus,
+input[type=text]:focus,
+select:focus {
+  outline: none;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(240,125,0,.1);
+}
+textarea::placeholder, input::placeholder { color: #ccc; }
+.char-ct { font-size: 11px; color: #ccc; text-align: right; margin-top: 5px; }
+
+.sel-wrap { position: relative; }
+select { appearance: none; cursor: pointer; }
+.sel-wrap::after {
+  content: '';
+  position: absolute;
+  right: 16px; top: 50%;
+  transform: translateY(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--soft);
+  pointer-events: none;
+}
+
+.scale-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.scale-btn {
+  width: 48px; height: 48px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--white);
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--mid);
+  cursor: pointer;
+  transition: all .15s;
+}
+.scale-btn:hover { border-color: var(--orange); color: var(--orange); transform: translateY(-2px); }
+.scale-btn.sel {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(240,125,0,.3);
+}
+.scale-lbls { display: flex; justify-content: space-between; font-size: 11px; color: #bbb; margin-bottom: 18px; }
+
+.nav { display: flex; gap: 12px; margin-top: 32px; align-items: center; }
+.btn-prev {
+  padding: 12px 22px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  background: transparent;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--soft);
+  cursor: pointer;
+  transition: all .15s;
+}
+.btn-prev:hover { border-color: var(--dark); color: var(--dark); }
+.btn-next {
+  flex: 1;
+  max-width: 260px;
+  padding: 13px 28px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--orange);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  transition: background .15s, transform .1s, box-shadow .15s;
+  box-shadow: 0 4px 14px rgba(240,125,0,.3);
+}
+.btn-next:hover {
+  background: var(--orange-deep);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(240,125,0,.35);
+}
+.btn-next:active { transform: translateY(0); }
+.btn-next:disabled { opacity: .7; cursor: not-allowed; transform: none; }
+
+.intro-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.intro-icon {
+  width: 42px; height: 42px;
+  border-radius: 10px;
+  background: var(--orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 18px;
+}
+.intro-card p { font-size: 13px; color: var(--mid); line-height: 1.75; }
+.intro-card strong { color: var(--dark); }
+
+.field-group { margin-bottom: 20px; }
+.field-lbl {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--orange);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.divider { height: 1px; background: var(--bg); margin: 26px 0; }
+.sub-lbl { font-size: 13px; color: var(--dark); font-weight: 500; margin-bottom: 10px; }
+
+.thanks {
+  text-align: center;
+  padding: 64px 44px;
+  display: none;
+}
+.thanks.active { display: block; }
+.thanks-circle {
+  width: 76px; height: 76px;
+  border-radius: 50%;
+  background: var(--orange-light);
+  border: 2.5px solid var(--orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  font-size: 32px;
+}
+.thanks h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  color: var(--dark);
+  font-weight: 500;
+  margin-bottom: 14px;
+}
+.thanks p { font-size: 14px; color: var(--soft); line-height: 1.75; max-width: 420px; margin: 0 auto 10px; }
+.thanks .accent { color: var(--orange); font-weight: 700; font-size: 13px; margin-top: 4px; }
+
+footer {
+  background: var(--dark-2);
+  padding: 20px 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+footer img { height: 30px; opacity: .6; }
+footer p { font-size: 11px; color: #555; }
+
+#q6uses { display: none; }
+
+@media (max-width: 600px) {
+  .hdr { padding: 16px 20px; }
+  .hero { padding: 28px 24px 22px; }
+  .form-body { padding: 28px 22px; }
+  .hero h1 { font-size: 23px; }
+  .prog-bar { padding: 10px 22px; }
+  .btn-next { max-width: 100%; }
+  .scale-btn { width: 42px; height: 42px; font-size: 14px; }
+  footer { padding: 16px 22px; flex-direction: column; gap: 8px; text-align: center; }
+  footer img { height: 26px; }
+}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<header class="hdr">
+  <img class="hdr-logo" src="logo-transparente.png" alt="LX Logo" />
+  <div class="hdr-divider"></div>
+  <div class="hdr-info">
+    <span class="hdr-sub">Contabilidade · Gestão · Consultoria</span>
+    <span class="hdr-tag">Diagnóstico Interno de Equipa</span>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow">Questionário Interno</div>
+  <h1>Diagnóstico de <em>Rotina e Ferramentas</em></h1>
+  <p>Queremos conhecer o teu dia a dia de perto. As tuas respostas vão ajudar a LXgest a identificar onde podemos melhorar — para ti, para a equipa e para os nossos clientes.</p>
+</section>
+
+<div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+<div class="prog-bar">
+  <span class="prog-label" id="progLabel">Identificação</span>
+  <span class="prog-pct" id="progPct">0%</span>
+</div>
+
+<div class="form-body">
+
+<div class="step active" id="s0">
+  <div class="intro-card">
+    <div class="intro-icon">⏱</div>
+    <p>Este questionário demora cerca de <strong>5 minutos</strong>. Não há respostas certas ou erradas — queremos apenas perceber como trabalhas e onde sentes mais atrito no dia a dia.</p>
+  </div>
+  <div class="field-group">
+    <div class="field-lbl">O teu nome</div>
+    <input type="text" id="f_nome" placeholder="Nome (opcional)">
+  </div>
+  <div class="field-group">
+    <div class="field-lbl">A tua função na LXgest</div>
+    <div class="sel-wrap">
+      <select id="f_funcao">
+        <option value="">Seleciona a tua função...</option>
+        <option value="cto">CTO / Tecnologia</option>
+        <option value="account">Account / Contabilidade</option>
+        <option value="gestao">Gestão / Direção</option>
+        <option value="rh">Recursos Humanos</option>
+        <option value="admin">Administrativo</option>
+        <option value="outro">Outra</option>
+      </select>
+    </div>
+  </div>
+  <div class="nav">
+    <button type="button" class="btn-next" onclick="goNextStep()">Começar questionário →</button>
+  </div>
+</div>
+
+<div class="step" id="s1">
+  <div class="stag">Diagnóstico de Rotina</div>
+  <div class="q-num">Pergunta 1 de 10</div>
+  <div class="q-text">Quais são as tarefas do teu dia a dia que mais tempo consomem e que sentes que têm pouco valor acrescentado?</div>
+  <div class="q-hint">→ Pensa nas atividades repetitivas, burocráticas ou que fazem perder tempo sem grande impacto visível.</div>
+  <div class="opts">
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Inserção manual de dados / lançamentos</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Recolha e organização de documentos de clientes</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Criação de relatórios e mapas periódicos</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Envio de emails de acompanhamento / lembretes</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Preenchimento de formulários e declarações</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Reconciliações e validações de dados</span></label>
+  </div>
+  <textarea style="margin-top:12px" placeholder="Outras tarefas que consomem tempo..." id="c1_ta" oninput="cc(this,'c1')" maxlength="300"></textarea>
+  <div class="char-ct" id="c1">0 / 300</div>
+  <div class="nav"><button class="btn-prev" type="button" onclick="goPrevStep()">← Anterior</button><button class="btn-next" type="button" onclick="goNextStep()">Seguinte →</button></div>
+</div>
+
+<div class="step" id="s2">
+  <div class="stag">Diagnóstico de Rotina</div>
+  <div class="q-num">Pergunta 2 de 10</div>
+  <div class="q-text">Em que momentos do teu trabalho sentes mais frustração ou bloqueios?</div>
+  <div class="q-hint">→ Pensa em situações concretas: esperar por informação, erros nos sistemas, falta de clareza, etc.</div>
+  <div class="opts">
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Esperar por documentos ou respostas de clientes</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Erros e inconsistências nos dados recebidos</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Software lento ou com falhas técnicas</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Dificuldade em encontrar informação histórica</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Pedidos urgentes que interrompem o trabalho planeado</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Falta de processos claros ou standardizados</span></label>
+  </div>
+  <textarea style="margin-top:12px" placeholder="Descreve o teu principal bloqueio..." id="c2_ta" oninput="cc(this,'c2')" maxlength="300"></textarea>
+  <div class="char-ct" id="c2">0 / 300</div>
+  <div class="nav"><button class="btn-prev" type="button" onclick="goPrevStep()">← Anterior</button><button class="btn-next" type="button" onclick="goNextStep()">Seguinte →</button></div>
+</div>
+
+<div class="step" id="s3">
+  <div class="stag">Diagnóstico de Rotina</div>
+  <div class="q-num">Pergunta 3 de 10</div>
+  <div class="q-text">Que tarefas repetitivas realizas frequentemente e que achas que poderiam ser automatizadas?</div>
+  <div class="q-hint">→ Pensa no que fazes mais do que 3 vezes por semana de forma igual ou muito semelhante.</div>
+  <textarea placeholder="Ex: Sempre que recebo faturas, tenho de as categorizar manualmente..." id="c3_ta" oninput="cc(this,'c3')" maxlength="500" style="min-height:110px"></textarea>
+  <div class="char-ct" id="c3">0 / 500</div>
+  <div class="divider"></div>
+  <div class="sub-lbl">Com que frequência realizas estas tarefas?</div>
+  <div class="opts">
+    <label class="opt"><input type="radio" name="q3f" onchange="togR(this)"><span class="opt-lbl">Várias vezes por dia</span></label>
+    <label class="opt"><input type="radio" name="q3f" onchange="togR(this)"><span class="opt-lbl">Diariamente</span></label>
+    <label class="opt"><input type="radio" name="q3f" onchange="togR(this)"><span class="opt-lbl">Semanalmente</span></label>
+    <label class="opt"><input type="radio" name="q3f" onchange="togR(this)"><span class="opt-lbl">Mensalmente (obrigações periódicas)</span></label>
+  </div>
+  <div class="nav"><button type="button" class="btn-prev" onclick="goPrevStep()">Voltar</button><button type="button" class="btn-next" onclick="goNextStep()">Continuar</button></div>
+</div>
+
+<div class="step" id="s4">
+  <div class="stag">Tomada de Decisão</div>
+  <div class="q-num">Pergunta 4 de 10</div>
+  <div class="q-text">Com que frequência te faltam dados para tomar decisões? Que informação gostarias de ter mais facilmente?</div>
+  <div class="q-hint">→ Pensa em situações onde tiveste de avançar sem ter toda a informação necessária.</div>
+  <div class="sub-lbl">Com que frequência tens falta de informação?</div>
+  <div class="scale-row" id="sc4_div"></div>
+  <div class="scale-lbls"><span>Raramente</span><span>Às vezes</span><span>Sempre</span></div>
+  <div class="opts">
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Situação financeira atual do cliente</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Prazos fiscais e obrigações em falta</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Histórico de comunicações com o cliente</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Benchmarks e comparações do setor</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Status de tarefas da equipa</span></label>
+  </div>
+  <div class="nav"><button type="button" class="btn-prev" onclick="goPrevStep()">Voltar</button><button type="button" class="btn-next" onclick="goNextStep()">Continuar</button></div>
+</div>
+
+<div class="step" id="s5">
+  <div class="stag">Tomada de Decisão</div>
+  <div class="q-num">Pergunta 5 de 10</div>
+  <div class="q-text">Que sistemas ou ferramentas usas atualmente e em que pontos eles falham ou te atrasam?</div>
+  <div class="q-hint">→ Lista as ferramentas principais e o que funciona menos bem.</div>
+  <div class="opts" style="margin-bottom:16px">
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Primavera / PHC / outro ERP de contabilidade</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Microsoft Excel / Google Sheets</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Email (Outlook / Gmail)</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Portal das Finanças / AT</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Ferramentas de gestão de tarefas (Trello, Asana...)</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Partilha de ficheiros (SharePoint, Drive...)</span></label>
+  </div>
+  <textarea placeholder="O que falha ou atrasa mais nestas ferramentas?" id="c5_ta" oninput="cc(this,'c5')" maxlength="300"></textarea>
+  <div class="char-ct" id="c5">0 / 300</div>
+  <div class="nav"><button type="button" class="btn-prev" onclick="goPrevStep()">Voltar</button><button type="button" class="btn-next" onclick="goNextStep()">Continuar</button></div>
+</div>
+
+<div class="step" id="s6">
+  <div class="stag">IA e Tecnologia</div>
+  <div class="q-num">Pergunta 6 de 10</div>
+  <div class="q-text">Utilizas alguma ferramenta de IA no teu trabalho? Se sim, para que tarefas específicas?</div>
+  <div class="q-hint">→ Exemplos: ChatGPT, Copilot, Claude, Gemini ou qualquer ferramenta com IA integrada...</div>
+  <div class="opts" style="margin-bottom:16px">
+    <label class="opt"><input type="radio" name="q6ia" onchange="togR(this);showUses(true)"><span class="opt-lbl">Sim, uso regularmente</span></label>
+    <label class="opt"><input type="radio" name="q6ia" onchange="togR(this);showUses(true)"><span class="opt-lbl">Sim, já experimentei mas uso pouco</span></label>
+    <label class="opt"><input type="radio" name="q6ia" onchange="togR(this);showUses(false)"><span class="opt-lbl">Não, nunca utilizei</span></label>
+  </div>
+  <div id="q6uses">
+    <div class="sub-lbl">Para que utilizas IA?</div>
+    <div class="opts">
+      <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Redigir emails e comunicações</span></label>
+      <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Pesquisa e síntese de informação fiscal/legal</span></label>
+      <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Criar ou organizar documentos</span></label>
+      <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Análise de dados e relatórios</span></label>
+      <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Automatizar tarefas repetitivas</span></label>
+      <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Responder a dúvidas técnicas</span></label>
+    </div>
+  </div>
+  <div class="nav"><button type="button" class="btn-prev" onclick="goPrevStep()">Voltar</button><button type="button" class="btn-next" onclick="goNextStep()">Continuar</button></div>
+</div>
+
+<div class="step" id="s7">
+  <div class="stag">IA e Tecnologia</div>
+  <div class="q-num">Pergunta 7 de 10</div>
+  <div class="q-text">Se não utilizas IA, o que te impede? Se utilizas, que limitações encontras?</div>
+  <div class="q-hint">→ Identifica as barreiras reais: desconhecimento, confiança, políticas, tempo de aprendizagem...</div>
+  <div class="opts">
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Não sei bem como usar / onde começar</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Não tenho confiança nos resultados que produz</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Preocupações com privacidade de dados dos clientes</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Não há integração com as ferramentas que já uso</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Falta de tempo para aprender / explorar</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Não identifiquei ainda onde me seria útil</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Não há barreiras — uso sem problemas</span></label>
+  </div>
+  <div class="nav"><button type="button" class="btn-prev" onclick="goPrevStep()">Voltar</button><button type="button" class="btn-next" onclick="goNextStep()">Continuar</button></div>
+</div>
+
+<div class="step" id="s8">
+  <div class="stag">IA e Tecnologia</div>
+  <div class="q-num">Pergunta 8 de 10</div>
+  <div class="q-text">Se tivesses uma ferramenta "ideal" baseada em IA, o que ela faria por ti no dia a dia?</div>
+  <div class="q-hint">→ Pensa no teu trabalho concreto. Sem limites tecnológicos — o que gostarias que existisse?</div>
+  <textarea placeholder="Ex: Gostaria que analisasse automaticamente os extratos bancários dos clientes e me avisasse de anomalias..." id="c8_ta" oninput="cc(this,'c8')" maxlength="500" style="min-height:120px"></textarea>
+  <div class="char-ct" id="c8">0 / 500</div>
+  <div class="divider"></div>
+  <div class="sub-lbl">Que área beneficiaria mais?</div>
+  <div class="opts">
+    <label class="opt"><input type="radio" name="q8a" onchange="togR(this)"><span class="opt-lbl">Contabilidade e lançamentos</span></label>
+    <label class="opt"><input type="radio" name="q8a" onchange="togR(this)"><span class="opt-lbl">Comunicação com clientes</span></label>
+    <label class="opt"><input type="radio" name="q8a" onchange="togR(this)"><span class="opt-lbl">Relatórios e análise financeira</span></label>
+    <label class="opt"><input type="radio" name="q8a" onchange="togR(this)"><span class="opt-lbl">Cumprimento fiscal e obrigações legais</span></label>
+    <label class="opt"><input type="radio" name="q8a" onchange="togR(this)"><span class="opt-lbl">Gestão interna / coordenação de equipa</span></label>
+  </div>
+  <div class="nav"><button type="button" class="btn-prev" onclick="goPrevStep()">Voltar</button><button type="button" class="btn-next" onclick="goNextStep()">Continuar</button></div>
+</div>
+
+<div class="step" id="s9">
+  <div class="stag">Eficiência e Melhoria</div>
+  <div class="q-num">Pergunta 9 de 10</div>
+  <div class="q-text">Que tipo de erro ou retrabalho acontece com mais frequência? O que poderia evitar isso?</div>
+  <div class="q-hint">→ Pensa nos momentos em que tens de refazer algo porque algo correu mal ou faltou informação.</div>
+  <div class="opts" style="margin-bottom:16px">
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Erros de transcrição / cópia de dados</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Trabalho baseado em informação desatualizada</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Mal-entendidos com clientes sobre o que foi pedido</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Duplicação de trabalho com colegas da equipa</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Prazos esquecidos ou comunicados em cima da hora</span></label>
+    <label class="opt"><input type="checkbox" onchange="tog(this)"><span class="opt-lbl">Erros de cálculo em folhas de Excel</span></label>
+  </div>
+  <textarea placeholder="O que poderia evitar este retrabalho?" id="c9_ta" oninput="cc(this,'c9')" maxlength="300"></textarea>
+  <div class="char-ct" id="c9">0 / 300</div>
+  <div class="nav"><button type="button" class="btn-prev" onclick="goPrevStep()">Voltar</button><button type="button" class="btn-next" onclick="goNextStep()">Continuar</button></div>
+</div>
+
+<div class="step" id="s10">
+  <div class="stag">Eficiência e Melhoria</div>
+  <div class="q-num">Pergunta 10 de 10</div>
+  <div class="q-text">Se pudesses mudar uma única coisa na forma como trabalhas hoje, o que seria e porquê?</div>
+  <div class="q-hint">→ Esta é a tua prioridade estratégica pessoal. Não há resposta errada.</div>
+  <textarea placeholder="A mudança mais importante que faria diferença no meu trabalho seria..." id="c10_ta" oninput="cc(this,'c10')" maxlength="500" style="min-height:130px"></textarea>
+  <div class="char-ct" id="c10">0 / 500</div>
+  <div class="divider"></div>
+  <div class="sub-lbl">Qual seria o impacto esperado?</div>
+  <div class="opts">
+    <label class="opt"><input type="radio" name="q10i" onchange="togR(this)"><span class="opt-lbl">Poupar tempo significativo por semana</span></label>
+    <label class="opt"><input type="radio" name="q10i" onchange="togR(this)"><span class="opt-lbl">Reduzir erros e retrabalho</span></label>
+    <label class="opt"><input type="radio" name="q10i" onchange="togR(this)"><span class="opt-lbl">Melhorar a qualidade do serviço ao cliente</span></label>
+    <label class="opt"><input type="radio" name="q10i" onchange="togR(this)"><span class="opt-lbl">Reduzir o stress e carga de trabalho</span></label>
+    <label class="opt"><input type="radio" name="q10i" onchange="togR(this)"><span class="opt-lbl">Tomar melhores decisões mais rapidamente</span></label>
+  </div>
+  <div class="nav">
+    <button type="button" class="btn-prev" onclick="goPrevStep()">Voltar</button>
+    <button type="button" class="btn-next" id="submitBtn" onclick="submitForm()">Enviar respostas</button>
+  </div>
+</div>
+
+<div class="thanks" id="thanks">
+  <div class="thanks-circle">✓</div>
+  <h2>Obrigado pela tua contribuição!</h2>
+  <p>As tuas respostas foram registadas. A LXgest vai analisar todos os inputs da equipa para identificar as melhores oportunidades de melhoria e automação.</p>
+  <p class="accent">Em breve partilharemos os resultados com a equipa.</p>
+</div>
+
+</div>
+
+<footer>
+  <img src="logo-transparente.png" alt="LX Logo" style="width: 120px; height: auto; opacity: 0.6;" />
+  <p>© 2026 LXgest · Contabilidade, Gestão e Consultoria</p>
+</footer>
+
+</div>
+
+<script>
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbw8BshZdkazbPf9cxN466rdlrk41bpcGi2DsJurVHFew81YK_MSGMmfr4oRVXgFvkobuQ/exec';
+
+let cur = 0;
+const total = 10;
+E
+function upd() {
+  const pct = Math.round((cur / total) * 100);
+  const fill = document.getElementById('progFill');
+  const label = document.getElementById('progLabel');
+  const pctEl = document.getElementById('progPct');
+
+  if (fill) fill.style.width = pct + '%';
+  if (label) label.textContent = cur === 0 ? 'Identificação' : 'Pergunta ' + cur + ' de ' + total;
+  if (pctEl) pctEl.textContent = pct + '%';
+}
+
+function show(n) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('s' + n);
+  if (el) el.classList.add('active');
+  upd();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goNextStep() {
+  if (cur < total) {
+    cur++;
+    show(cur);
+  }
+}
+
+function goPrevStep() {
+  if (cur > 0) {
+    cur--;
+    show(cur);
+  }
+}
+
+function recolherRespostas() {
+  const nome = document.getElementById('f_nome').value || '(anónimo)';
+  const funcao = document.getElementById('f_funcao').value || '(não indicado)';
+
+  function checks(stepId) {
+    return [...document.querySelectorAll('#' + stepId + ' input[type=checkbox]:checked')]
+      .map(x => x.closest('.opt').querySelector('.opt-lbl').textContent.trim())
+      .join(' | ') || '—';
+  }
+
+  function radio(name) {
+    const el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.closest('.opt').querySelector('.opt-lbl').textContent.trim() : '—';
+  }
+
+  function txt(id) {
+    return document.getElementById(id)?.value.trim() || '—';
+  }
+
+  function escala(id) {
+    const el = document.querySelector('#' + id + ' .scale-btn.sel');
+    return el ? el.textContent.trim() : '—';
+  }
+
+  return {
+    'Data': new Date().toLocaleString('pt-PT'),
+    'Nome': nome,
+    'Função': funcao,
+    'P1 - Tarefas baixo valor': checks('s1'),
+    'P1 - Outras tarefas': txt('c1_ta'),
+    'P2 - Bloqueios': checks('s2'),
+    'P2 - Descrição bloqueio': txt('c2_ta'),
+    'P3 - Tarefas automatizáveis': txt('c3_ta'),
+    'P3 - Frequência': radio('q3f'),
+    'P4 - Frequência falta info': escala('sc4_div'),
+    'P4 - Tipo informação em falta': checks('s4'),
+    'P5 - Ferramentas usadas': checks('s5'),
+    'P5 - Falhas ferramentas': txt('c5_ta'),
+    'P6 - Usa IA': radio('q6ia'),
+    'P6 - Para que usa IA': checks('s6'),
+    'P7 - Barreiras IA': checks('s7'),
+    'P8 - Ferramenta ideal': txt('c8_ta'),
+    'P8 - Área prioritária': radio('q8a'),
+    'P9 - Erros/retrabalho': checks('s9'),
+    'P9 - Como evitar': txt('c9_ta'),
+    'P10 - Mudança prioritária': txt('c10_ta'),
+    'P10 - Impacto esperado': radio('q10i')
+  };
+}
+
+async function submitForm() {
+  const btn = document.getElementById('submitBtn');
+  if (btn) {
+    btn.textContent = 'A enviar...';
+    btn.disabled = true;
+  }
+
+  const dados = recolherRespostas();
+
+  try {
+    const resp = await fetch(SHEET_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(dados)
+    });
+
+    const result = await resp.json();
+
+    if (!resp.ok || !result.ok) {
+      throw new Error(result.error || 'Falha no envio do formulário');
+    }
+
+    mostrarObrigado();
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao enviar o formulário. Tenta novamente.');
+    if (btn) {
+      btn.textContent = 'Enviar respostas';
+      btn.disabled = false;
+    }
+  }
+}
+function mostrarObrigado() {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  const thanks = document.getElementById('thanks');
+  if (thanks) thanks.classList.add('active');
+  document.getElementById('progFill').style.width = '100%';
+  document.getElementById('progLabel').textContent = 'Concluído';
+  document.getElementById('progPct').textContent = '100%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function tog(el) {
+  el.closest('.opt').classList.toggle('sel', el.checked);
+}
+
+function togR(el) {
+  const name = el.name;
+  document.querySelectorAll('input[name="' + name + '"]').forEach(r => {
+    r.closest('.opt').classList.toggle('sel', r.checked);
+  });
+}
+
+function cc(el, id) {
+  const max = parseInt(el.getAttribute('maxlength') || 300, 10);
+  document.getElementById(id).textContent = el.value.length + ' / ' + max;
+}
+
+function showUses(show) {
+  document.getElementById('q6uses').style.display = show ? 'block' : 'none';
+}
+
+(function () {
+  const c = document.getElementById('sc4_div');
+  for (let i = 1; i <= 5; i++) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'scale-btn';
+    b.textContent = i;
+    b.onclick = function () {
+      c.querySelectorAll('.scale-btn').forEach(x => x.classList.remove('sel'));
+      this.classList.add('sel');
+    };
+    c.appendChild(b);
+  }
+})();
+
+show(0);
+</script>
+</body>
+</html>
