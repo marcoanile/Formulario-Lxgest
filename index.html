@@ -669,7 +669,7 @@ footer p { font-size: 11px; color: #555; }
   </div>
   <div class="nav">
     <button type="button" class="btn-prev" onclick="goPrevStep()">Voltar</button>
-    <button type="button" class="btn-next" onclick="goNextStep()">Continuar</button>
+    <button type="button" class="btn-next" id="submitBtn" onclick="submit()">Enviar respostas</button>
   </div>
 </div>
 
@@ -695,6 +695,7 @@ footer p { font-size: 11px; color: #555; }
 // ─── CONFIGURAÇÃO ───
 // Colar aqui o URL do Google Apps Script para guardar as respostas no Google Sheets
 // Instruções em baixo neste ficheiro (secção COMO CONFIGURAR)
+<script>
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzZ774sfE99t5aADm4dzTzUtPxO7pyVnwvruT_YwnQ01YETLWWYrmm4hAzZ-yQcV230yQ/exec';
 
 // ─── NAVEGAÇÃO ───
@@ -717,7 +718,7 @@ function show(n) {
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
   const el = document.getElementById('s' + n);
   if (el) el.classList.add('active');
-  show(0);
+  upd();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -734,6 +735,7 @@ function goPrevStep() {
     show(cur);
   }
 }
+
 // ─── RECOLHA DE RESPOSTAS ───
 function recolherRespostas() {
   const nome   = document.getElementById('f_nome').value || '(anónimo)';
@@ -744,68 +746,79 @@ function recolherRespostas() {
       .map(x => x.closest('.opt').querySelector('.opt-lbl').textContent.trim())
       .join(' | ') || '—';
   }
+
   function radio(name) {
     const el = document.querySelector('input[name="' + name + '"]:checked');
     return el ? el.closest('.opt').querySelector('.opt-lbl').textContent.trim() : '—';
   }
-  function txt(id) { return document.getElementById(id)?.value.trim() || '—'; }
+
+  function txt(id) {
+    return document.getElementById(id)?.value.trim() || '—';
+  }
+
   function escala(id) {
     const el = document.querySelector('#' + id + ' .scale-btn.sel');
     return el ? el.textContent.trim() : '—';
   }
 
   return {
-    'Data':                         new Date().toLocaleString('pt-PT'),
-    'Nome':                         nome,
-    'Função':                       funcao,
-    'P1 - Tarefas baixo valor':     checks('s1'),
-    'P1 - Outras tarefas':          txt('c1_ta'),
-    'P2 - Bloqueios':               checks('s2'),
-    'P2 - Descrição bloqueio':      txt('c2_ta'),
-    'P3 - Tarefas automatizáveis':  txt('c3_ta'),
-    'P3 - Frequência':              radio('q3f'),
-    'P4 - Frequência falta info':   escala('sc4_div'),
-    'P4 - Tipo informação em falta':checks('s4'),
-    'P5 - Ferramentas usadas':      checks('s5'),
-    'P5 - Falhas ferramentas':      txt('c5_ta'),
-    'P6 - Usa IA':                  radio('q6ia'),
-    'P6 - Para que usa IA':         checks('s6'),
-    'P7 - Barreiras IA':            checks('s7'),
-    'P8 - Ferramenta ideal':        txt('c8_ta'),
-    'P8 - Área prioritária':        radio('q8a'),
-    'P9 - Erros/retrabalho':        checks('s9'),
-    'P9 - Como evitar':             txt('c9_ta'),
-    'P10 - Mudança prioritária':    txt('c10_ta'),
-    'P10 - Impacto esperado':       radio('q10i'),
+    data: new Date().toLocaleString('pt-PT'),
+    nome,
+    funcao,
+    p1_tarefas_baixo_valor: checks('s1'),
+    p1_outras_tarefas: txt('c1_ta'),
+    p2_bloqueios: checks('s2'),
+    p2_descricao_bloqueio: txt('c2_ta'),
+    p3_tarefas_automatizaveis: txt('c3_ta'),
+    p3_frequencia: radio('q3f'),
+    p4_frequencia_falta_info: escala('sc4_div'),
+    p4_tipo_info_em_falta: checks('s4'),
+    p5_ferramentas_usadas: checks('s5'),
+    p5_falhas_ferramentas: txt('c5_ta'),
+    p6_usa_ia: radio('q6ia'),
+    p6_para_que_usa_ia: checks('s6'),
+    p7_barreiras_ia: checks('s7'),
+    p8_ferramenta_ideal: txt('c8_ta'),
+    p8_area_prioritaria: radio('q8a'),
+    p9_erros_retrabalho: checks('s9'),
+    p9_como_evitar: txt('c9_ta'),
+    p10_mudanca_prioritaria: txt('c10_ta'),
+    p10_impacto_esperado: radio('q10i')
   };
 }
 
 // ─── SUBMISSÃO ───
-function submit() {
+async function submit() {
   const btn = document.getElementById('submitBtn');
-  btn.textContent = 'A enviar...';
-  btn.disabled = true;
+  if (btn) {
+    btn.textContent = 'A enviar...';
+    btn.disabled = true;
+  }
 
   const dados = recolherRespostas();
 
-  if (!SHEET_URL || SHEET_URL === 'https://script.google.com/macros/s/AKfycbzZ774sfE99t5aADm4dzTzUtPxO7pyVnwvruT_YwnQ01YETLWWYrmm4hAzZ-yQcV230yQ/exec') {
-    // Modo demo: mostra ecrã de obrigado sem enviar
-    mostrarObrigado();
-    return;
-  }
+  try {
+    const resp = await fetch(SHEET_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(dados)
+    });
 
-  fetch(SHEET_URL, {
-  method: 'POST',
-  headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-  body: JSON.stringify(dados)
-})
-.then(() => {
-  // mostrar obrigado / tela final
-})
-.catch((err) => {
-  alert('Erro ao enviar o formulário. Tenta novamente.');
-  console.error(err);
-});
+    if (!resp.ok) {
+      throw new Error('Falha no envio');
+    }
+
+    mostrarObrigado();
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao enviar o formulário. Tenta novamente.');
+
+    if (btn) {
+      btn.textContent = 'Enviar respostas';
+      btn.disabled = false;
+    }
+  }
+}
 
 function mostrarObrigado() {
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
@@ -854,7 +867,7 @@ function showUses(show) {
 })();
 
 show(0);
-
+</script>
 /*
 ══════════════════════════════════════════════════════════════
  COMO CONFIGURAR — GOOGLE SHEETS (passo a passo)
