@@ -772,8 +772,10 @@ async function submitForm() {
       body: JSON.stringify(dados)
     });
 
-    if (!resp.ok) {
-      throw new Error('Falha no envio do formulário');
+    const result = await resp.json();
+
+    if (!resp.ok || !result.ok) {
+      throw new Error(result.error || 'Falha no envio do formulário');
     }
 
     mostrarObrigado();
@@ -786,7 +788,6 @@ async function submitForm() {
     }
   }
 }
-
 function mostrarObrigado() {
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
   const thanks = document.getElementById('thanks');
